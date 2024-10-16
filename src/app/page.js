@@ -1,0 +1,81 @@
+"use client";
+import { pipeline, env } from "@xenova/transformers";
+import { useEffect, useState } from "react";
+
+export default function Home() {
+  const [text, setText] = useState("");
+  const [result, setResult] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [comment, setComment] = useState({text:'', label:''});
+  // Random way to trigger use effect
+  const [startAnalysis, setSetAnalysis] = useState(false);
+
+  console.log("Comment", comment);
+
+  const onSubmitHandler = (e) => {
+    e.preventDefault();
+    setSetAnalysis(!startAnalysis);
+   
+  };
+  console.log("Comments", comments);
+
+  // console.log(result);
+  useEffect(() => {
+    async function initializeModel() {
+      let sentimentAnalysis = await pipeline("sentiment-analysis");
+      let result = await sentimentAnalysis(text);
+      // console.log(result);
+      let readableResult = JSON.stringify(result, null, 2);
+      setResult(readableResult);
+      setComment({ text: text, label: readableResult.substring(20, 28) });
+    }
+
+    initializeModel();
+  }, [startAnalysis]);
+
+  useEffect(() => {
+    if (comment.text !== "") {
+      setComments((comments) => [...comments, comment]);
+    }
+  
+    
+  }, [comment])
+  
+
+  return (
+    <section className="m-28 flex flex-col items-center justify-center gap-28">
+      {/* Header */}
+      <h1 className="text-3xl font-semibold ">
+        Comment App Based On Sentiment Analysis
+      </h1>
+      {/* INput Field */}
+      <form className="w-full text-center">
+        <div className="flex flex-row gap-4 items-center justify-center">
+          <input
+            type="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            className="border-black border-[1px] w-[500px] h-[50px] px-10 text-lg"
+            placeholder="We'd love your feedback"
+          />
+          <button
+            className="bg-blue-500 text-white w-auto h-auto px-[20px] py-[10px]"
+            onClick={onSubmitHandler}
+          >
+            {" "}
+            Submit{" "}
+          </button>
+        </div>
+        <p>{result}</p>
+      </form>
+
+      {/* Output Section */}
+      <div className="border-[1px] border-gray-400 px-[20px] py-[10px] w-full  flex flex-row gap-4 items-center justify-between">
+        <p className="text-lg w-[70%]">I love this app</p>
+        <span className="text-sm bg-blue-500 text-white  w-auto h-auto px-[20px] py-[10px]">
+          POSITIVE
+        </span>
+      </div>
+    </section>
+  );
+}
