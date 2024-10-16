@@ -141,7 +141,7 @@ export default function Home() {
       <div className="w-full flex flex-col gap-4">
         {filteredComments &&
           filteredComments.map((comment) => (
-            <div className="border-[1px] border-gray-400 px-[20px] py-[10px] w-full  flex flex-row gap-4 items-center justify-between">
+            <div key={comment.text} className="border-[1px] border-gray-400 px-[20px] py-[10px] w-full  flex flex-row gap-4 items-center justify-between">
               <p className="text-lg w-[70%]">{comment.text}</p>
               <span className="text-sm bg-blue-500 text-white  w-auto h-auto px-[20px] py-[10px]">
                 {comment.label}
