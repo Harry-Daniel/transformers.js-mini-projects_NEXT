@@ -10,15 +10,21 @@ export default function Home() {
   ]);
   const [comment, setComment] = useState({ text: "", label: "" });
   // Random way to trigger use effect
+
   const [startAnalysis, setSetAnalysis] = useState(false);
 
-  console.log("Comment", comment);
+  const [filter, setFilter] = useState("");
+
+  const filteredComments = filter === ""?comments:comments.filter((comment)=>comment.label===filter);
+
+
+  // console.log("filter", filter);
+  // console.log("filtered Comments", filteredComments);
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
     setSetAnalysis(!startAnalysis);
   };
-  console.log("Comments", comments);
 
   // console.log(result);
   useEffect(() => {
@@ -72,20 +78,29 @@ export default function Home() {
 
       {/*Filter for comments  */}
       <div className="flex flex-row gap-4">
-        <div className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white w-[150px] text-center h-auto px-[20px] py-[10px]">
+        <div
+          onClick={() => setFilter("POSITIVE")}
+          className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white w-[150px] text-center h-auto px-[20px] py-[10px]"
+        >
           POSITIVE
         </div>
-        <div className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white w-[150px] text-center h-auto px-[20px] py-[10px]">
+        <div
+          onClick={() => setFilter("NEGATIVE")}
+          className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white w-[150px] text-center h-auto px-[20px] py-[10px]"
+        >
           NEGATIVE
         </div>
-        <div className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white w-[150px] text-center h-auto px-[20px] py-[10px]">
+        <div
+          onClick={() => setFilter("")}
+          className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white w-[150px] text-center h-auto px-[20px] py-[10px]"
+        >
           ALL
         </div>
       </div>
       {/* Output Section */}
       <div className="w-full flex flex-col gap-4">
-        {comments &&
-          comments.map((comment) => (
+        {filteredComments &&
+          filteredComments.map((comment) => (
             <div className="border-[1px] border-gray-400 px-[20px] py-[10px] w-full  flex flex-row gap-4 items-center justify-between">
               <p className="text-lg w-[70%]">{comment.text}</p>
               <span className="text-sm bg-blue-500 text-white  w-auto h-auto px-[20px] py-[10px]">
