@@ -5,8 +5,10 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [text, setText] = useState("");
   const [result, setResult] = useState(null);
-  const [comments, setComments] = useState([]);
-  const [comment, setComment] = useState({text:'', label:''});
+  const [comments, setComments] = useState([
+    // {text:'I love this app', label:'POSITIVE'}
+  ]);
+  const [comment, setComment] = useState({ text: "", label: "" });
   // Random way to trigger use effect
   const [startAnalysis, setSetAnalysis] = useState(false);
 
@@ -15,7 +17,6 @@ export default function Home() {
   const onSubmitHandler = (e) => {
     e.preventDefault();
     setSetAnalysis(!startAnalysis);
-   
   };
   console.log("Comments", comments);
 
@@ -29,7 +30,7 @@ export default function Home() {
       setResult(readableResult);
       setComment({ text: text, label: readableResult.substring(20, 28) });
     }
-
+    setText('')
     initializeModel();
   }, [startAnalysis]);
 
@@ -37,10 +38,7 @@ export default function Home() {
     if (comment.text !== "") {
       setComments((comments) => [...comments, comment]);
     }
-  
-    
-  }, [comment])
-  
+  }, [comment]);
 
   return (
     <section className="m-28 flex flex-col items-center justify-center gap-28">
@@ -70,11 +68,16 @@ export default function Home() {
       </form>
 
       {/* Output Section */}
-      <div className="border-[1px] border-gray-400 px-[20px] py-[10px] w-full  flex flex-row gap-4 items-center justify-between">
-        <p className="text-lg w-[70%]">I love this app</p>
-        <span className="text-sm bg-blue-500 text-white  w-auto h-auto px-[20px] py-[10px]">
-          POSITIVE
-        </span>
+      <div className="w-full flex flex-col gap-4">
+        {comments &&
+          comments.map((comment) =>
+            <div className="border-[1px] border-gray-400 px-[20px] py-[10px] w-full  flex flex-row gap-4 items-center justify-between">
+              <p className="text-lg w-[70%]">{comment.text}</p>
+              <span className="text-sm bg-blue-500 text-white  w-auto h-auto px-[20px] py-[10px]">
+                {comment.label}
+              </span>
+            </div>
+          )}
       </div>
     </section>
   );
