@@ -30,7 +30,7 @@ export default function Home() {
       setResult(readableResult);
       setComment({ text: text, label: readableResult.substring(20, 28) });
     }
-    setText('')
+    setText("");
     initializeModel();
   }, [startAnalysis]);
 
@@ -41,7 +41,7 @@ export default function Home() {
   }, [comment]);
 
   return (
-    <section className="m-28 flex flex-col items-center justify-center gap-28">
+    <section className="m-28 flex flex-col items-center justify-center gap-10">
       {/* Header */}
       <h1 className="text-3xl font-semibold ">
         Comment App Based On Sentiment Analysis
@@ -56,28 +56,43 @@ export default function Home() {
             className="border-black border-[1px] w-[500px] h-[50px] px-10 text-lg"
             placeholder="We'd love your feedback"
           />
-          <button
-            className="bg-blue-500 text-white w-auto h-auto px-[20px] py-[10px]"
-            onClick={onSubmitHandler}
-          >
-            {" "}
-            Submit{" "}
-          </button>
+          {text && (
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white w-auto h-auto px-[20px] py-[10px]"
+              onClick={onSubmitHandler}
+              disabled={text ? false : true}
+            >
+              {" "}
+              Submit{" "}
+            </button>
+          )}
         </div>
-        <p>{result}</p>
+        {/* <p>{result}</p> */}
       </form>
 
+      {/*Filter for comments  */}
+      <div className="flex flex-row gap-4">
+        <div className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white w-[150px] text-center h-auto px-[20px] py-[10px]">
+          POSITIVE
+        </div>
+        <div className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white w-[150px] text-center h-auto px-[20px] py-[10px]">
+          NEGATIVE
+        </div>
+        <div className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white w-[150px] text-center h-auto px-[20px] py-[10px]">
+          ALL
+        </div>
+      </div>
       {/* Output Section */}
       <div className="w-full flex flex-col gap-4">
         {comments &&
-          comments.map((comment) =>
+          comments.map((comment) => (
             <div className="border-[1px] border-gray-400 px-[20px] py-[10px] w-full  flex flex-row gap-4 items-center justify-between">
               <p className="text-lg w-[70%]">{comment.text}</p>
               <span className="text-sm bg-blue-500 text-white  w-auto h-auto px-[20px] py-[10px]">
                 {comment.label}
               </span>
             </div>
-          )}
+          ))}
       </div>
     </section>
   );
