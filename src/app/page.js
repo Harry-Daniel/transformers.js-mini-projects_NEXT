@@ -52,13 +52,15 @@ export default function Home() {
       );
       let result = await reviewAnalysis(text);
       let readableResult = JSON.stringify(result, null, 2);
-      console.log(readableResult);
-      // setResult(readableResult);
-      // setComment({ text: text, label: readableResult.substring(20, 28) });
+      // console.log(readableResult.substring(20,27));
+      setResult(readableResult);
+      readableResult.substring(20, 27) !== '1 star"'
+        ? setComment({ text: text, label: readableResult.substring(20, 27) })
+        : setComment({ text: text, label: readableResult.substring(20, 26) });
     }
-    // setText("");
+    setText("");
     initializeModel();
-  }, [text]);
+  }, [startAnalysis]);
 
   useEffect(() => {
     if (comment.text !== "") {
@@ -99,16 +101,34 @@ export default function Home() {
       {/*Filter for comments  */}
       <div className="flex flex-row gap-4">
         <div
-          onClick={() => setFilter("POSITIVE")}
+          onClick={() => setFilter("5 stars")}
           className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white w-[150px] text-center h-auto px-[20px] py-[10px]"
         >
-          POSITIVE
+          5 STARS
         </div>
         <div
-          onClick={() => setFilter("NEGATIVE")}
+          onClick={() => setFilter("4 stars")}
           className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white w-[150px] text-center h-auto px-[20px] py-[10px]"
         >
-          NEGATIVE
+          4 STARS
+        </div>
+        <div
+          onClick={() => setFilter("3 stars")}
+          className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white w-[150px] text-center h-auto px-[20px] py-[10px]"
+        >
+          3 STARS
+        </div>
+        <div
+          onClick={() => setFilter("2 stars")}
+          className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white w-[150px] text-center h-auto px-[20px] py-[10px]"
+        >
+          2 STARS
+        </div>
+        <div
+          onClick={() => setFilter("1 star")}
+          className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white w-[150px] text-center h-auto px-[20px] py-[10px]"
+        >
+          1 STAR
         </div>
         <div
           onClick={() => setFilter("")}
