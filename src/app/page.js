@@ -15,8 +15,10 @@ export default function Home() {
 
   const [filter, setFilter] = useState("");
 
-  const filteredComments = filter === ""?comments:comments.filter((comment)=>comment.label===filter);
-
+  const filteredComments =
+    filter === ""
+      ? comments
+      : comments.filter((comment) => comment.label === filter);
 
   // console.log("filter", filter);
   // console.log("filtered Comments", filteredComments);
@@ -27,18 +29,36 @@ export default function Home() {
   };
 
   // console.log(result);
+  // Analyse based on positive/ negative
+  // useEffect(() => {
+  //   async function initializeModel() {
+  //     let sentimentAnalysis = await pipeline("sentiment-analysis");
+  //     let result = await sentimentAnalysis(text);
+  //     // console.log(result);
+  //     let readableResult = JSON.stringify(result, null, 2);
+  //     setResult(readableResult);
+  //     setComment({ text: text, label: readableResult.substring(20, 28) });
+  //   }
+  //   setText("");
+  //   initializeModel();
+  // }, [startAnalysis]);
+
+  // Analyse based off of Stars
   useEffect(() => {
     async function initializeModel() {
-      let sentimentAnalysis = await pipeline("sentiment-analysis");
-      let result = await sentimentAnalysis(text);
-      // console.log(result);
+      let reviewAnalysis = await pipeline(
+        "sentiment-analysis",
+        "Xenova/bert-base-multilingual-uncased-sentiment"
+      );
+      let result = await reviewAnalysis(text);
       let readableResult = JSON.stringify(result, null, 2);
-      setResult(readableResult);
-      setComment({ text: text, label: readableResult.substring(20, 28) });
+      console.log(readableResult);
+      // setResult(readableResult);
+      // setComment({ text: text, label: readableResult.substring(20, 28) });
     }
-    setText("");
+    // setText("");
     initializeModel();
-  }, [startAnalysis]);
+  }, [text]);
 
   useEffect(() => {
     if (comment.text !== "") {
