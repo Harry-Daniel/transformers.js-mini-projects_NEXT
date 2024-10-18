@@ -55,13 +55,18 @@ const AudioRecorder = () => {
       let result = await transcriber(audioURL);
       const readableResult = JSON.stringify(result, null, 2);
       setTranscriptionLoading(false);
-      setTranscribedText(readableResult);
-      console.log(readableResult);
+      const resultLength = readableResult.length;
+      const resultTextBegins = 13;
+      const resultTextEnds = resultLength - 3;
+      setTranscribedText(
+        readableResult.substring(resultTextBegins, resultTextEnds)
+      );
+      console.log(readableResult.substring(resultTextBegins, resultTextEnds));
     }
 
     if (isTranscribing && audioURL) {
       transcribeEnglishLocal();
-      setIsTranscribing(false)
+      setIsTranscribing(false);
     }
   }, [isTranscribing, audioURL]);
 
@@ -73,12 +78,14 @@ const AudioRecorder = () => {
     <>
       <div className="w-[100vw] h-[100vh] flex flex-col justify-center items-center gap-4 ">
         {/* results */}
-        <div className="flex flex-col gap-4 justify-center items-center">
+        <div className="flex flex-col max-w-[300px] gap-4 justify-center items-center">
           {/* Transcription */}
           {transcriptionLoading && <p>Transcription Loading...</p>}
           {transcribedText && (
-            <div className=" w-auto shadow-md p-5">
-              <pre>{transcribedText}</pre>
+            <div>
+              <p className=" max-w-[300px] shadow-md p-5">
+                {transcribedText}
+              </p>
             </div>
           )}
           {/* Audio Preview */}
