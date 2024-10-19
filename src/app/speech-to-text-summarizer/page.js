@@ -7,9 +7,12 @@ const AudioRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
   const [recorder, setRecorder] = useState(null);
-  const [transcribedText, setTranscribedText] = useState(null);
+  const [transcribedText, setTranscribedText] = useState('');
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [transcriptionLoading, setTranscriptionLoading] = useState(false);
+  const [summarizedText, setSummarizedText] = useState('');
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  const [summarizationLoading, setSummarizationLoading] = useState(false);
 
   // Handle MediaRecorder initialization
   useEffect(() => {
@@ -70,24 +73,66 @@ const AudioRecorder = () => {
     }
   }, [isTranscribing, audioURL]);
 
+  // Summarization logic
+  useEffect(() => {
+    async function summarize() {
+      if (!transcribedText) return;
+      setSummarizationLoading(true);
+      let summarizer = await pipeline(
+        "summarization",
+        "Xenova/distilbart-cnn-6-6"
+      );
+
+      let result = await summarizer(transcribedText,{ max_new_tokens: 100 });
+      const readableResult = JSON.stringify(result, null, 2);
+      setSummarizationLoading(false);
+      const resultLength = readableResult.length;
+      const resultTextBegins = 27;
+      const resultTextEnds = resultLength - 7;
+      setSummarizedText(
+        readableResult.substring(resultTextBegins, resultTextEnds)
+      );
+      console.log(readableResult);
+    }
+
+    if (isSummarizing && transcribedText) {
+      summarize();
+      setIsSummarizing(false);
+    }
+  }, [isSummarizing, transcribedText]);
+
   const transcribeHandler = () => {
     setIsTranscribing(true);
+  };
+  const summarizeHandler = () => {
+    setIsSummarizing(true);
   };
 
   return (
     <>
       <div className="w-[100vw] h-[100vh] flex flex-col justify-center items-center gap-4 ">
         {/* results */}
-        <div className="flex flex-col max-w-[300px] gap-4 justify-center items-center">
-          {/* Transcription */}
-          {transcriptionLoading && <p>Transcription Loading...</p>}
-          {transcribedText && (
-            <div>
-              <p className=" max-w-[300px] shadow-md p-5">
-                {transcribedText}
-              </p>
-            </div>
-          )}
+        <div className="flex flex-col max-w-[600px] gap-4 justify-center items-center">
+          {/* Text Results */}
+          <div className="flex lg:flex-row flex-col max-w-full gap-4 justify-center items-center">
+            {/* Transcription */}
+            {transcriptionLoading && <p>Transcription Loading...</p>}
+            {transcribedText && (
+              <div className="flex flex-col gap-4  max-w-[300px] shadow-md p-5 justify-center items-center">
+                <span className="text-base font-bold">Transcribed Text</span>
+                <p className="">{transcribedText}</p>
+              </div>
+            )}
+
+            {/* Summarization */}
+            {summarizationLoading && <p>Summarization Loading...</p>}
+            {summarizedText && (
+              <div className="flex flex-col gap-4  max-w-[300px] shadow-md p-5 justify-center items-center">
+                <span className="text-base font-bold">Summarized Text</span>
+                <p className="">{summarizedText}</p>
+              </div>
+            )}
+          </div>
           {/* Audio Preview */}
           {audioURL && (
             <div>
@@ -172,6 +217,28 @@ const AudioRecorder = () => {
                 </svg>
               </div>
               <p>End Recording</p>
+            </div>
+          )}
+
+          {/* Summarize button */}
+          {transcribedText && (
+            <div
+              className="flex flex-col items-center justify-center gap-2"
+              onClick={summarizeHandler}
+            >
+              <div className="w-20 h-20 bg-black flex justify-center items-center rounded-full cursor-pointer">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-12 h-12 text-white"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M5 21q-.825 0-1.413-.588T3 19V5q0-.825.588-1.413T5 3h11l5 5v11q0 .825-.588 1.413T19 21H5Zm3-4q.425 0 .713-.288T9 16q0-.425-.288-.713T8 15q-.425 0-.713.288T7 16q0 .425.288.713T8 17Zm0-4q.425 0 .713-.288T9 12q0-.425-.288-.713T8 11q-.425 0-.713.288T7 12q0 .425.288.713T8 13Zm0-4q.425 0 .713-.288T9 8q0-.425-.288-.713T8 7q-.425 0-.713.288T7 8q0 .425.288.713T8 9Zm7 0h4l-4-4v4Z"
+                  />
+                </svg>
+              </div>
+              <p>Summarize</p>
             </div>
           )}
         </div>
